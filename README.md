@@ -1,7 +1,7 @@
 # Trabajo EAP2
 _Diccionario de datos_
 
-**Base de datos:** 
+**Base de datos: datosPobreza** 
 
 _pobreza2013:_ Incidencia de la probreza provincial y distrital 2013
 
