@@ -1,0 +1,18 @@
+##Diccionario
+
+#Base de datos: DataFinalTrabajo.xlsx
+
+“Provincia", nombre de provincias en el Perú
+“Región", nombre de departamento del Perú mencionado previamente 
+"Organización Política", partidos políticos del Perú
+"Votos", votos por Pedro Castillo 
+"%Votos", porcentaje de votos por Pedro Castillo
+"Total_electores", total de electores por Pedro Castillo 
+"total_electores_mujeres", total de electores mujeres por Pedro Castillo
+"total_electores_jovenes", total de electores jóvenes por Pedro Castillo
+"porcentaje_mujeres", Porcentaje total de electores mujeres por Pedro Castillo
+"porcentaje_jovenes", Porcentaje total de electores jóvenes por Pedro Castillo
+"Ubigeo”, Ubicación geográfica
+"IDH", Índice de desarrollo humano a nivel provincial 
+"% Pobreza Extrema", Porcentaje de pobreza extrema a nivel provincial
+"PE_Hab", Pobreza extrema en número de habitantes.
