@@ -1,37 +1,32 @@
 # Trabajo EAP2
 _Diccionario de datos_
 
-**Base de datos: datosPobreza** 
+**Base de datos: DataFinalTrabajo** 
 
-_pobreza2013:_ Incidencia de la probreza provincial y distrital 2013
+_Provincia_: nombre de provincias en el Perú
 
-_ssr_estsalud:_ Tiene establecimiento de salud
+_Región_: nombre de departamento del Perú mencionado previamente 
 
-               0: No
+_Organización Política_: partidos políticos del Perú
 
-               1: Sí
+_Votos_: votos por Pedro Castillo 
 
-_pocujefe:_ Jefe de hogar con educación primaria incompleta
+_%Votos_: porcentaje de votos por Pedro Castillo
 
-               0: No
+_Total_electores_: total de electores por Pedro Castillo 
 
-               1: Sí
+_total_electores_mujeres_: total de electores mujeres por Pedro Castillo
 
-_vagua5:_ Agua por red pública dentro o fuera de la vivienda con abastecimiento diario
-            
-               0: No
-               
-               1: Sí
-               
-_hcombcoc3:_ La energía para cocinar es carbón/leña/bosta/estiércol
+_total_electores_jovenes_:total de electores jóvenes por Pedro Castillo
 
-               0: No
+_porcentaje_mujeres_: Porcentaje total de electores mujeres por Pedro Castillo
 
-               1: Sí
+_porcentaje_jovenes_: Porcentaje total de electores jóvenes por Pedro Castillo
 
-_rna_insps:_ Municipalidades tienen instituciones que financiarion programas sociales
+_Ubigeo_: Ubicación geográfica
 
-               0: No
+_IDH_: Índice de desarrollo humano a nivel provincial 
 
-               1: Sí
+_% Pobreza Extrema_: Porcentaje de pobreza extrema a nivel provincial
 
+_PE_Hab_: Pobreza extrema en número de habitantes.
