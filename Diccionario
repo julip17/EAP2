@@ -1,6 +1,6 @@
 ##Diccionario
 
-#Base de datos: DataFinalTrabajo.xlsx
+#Base de datos: DataFinalTrabajo.csv
 
 “Provincia", nombre de provincias en el Perú
 “Región", nombre de departamento del Perú mencionado previamente 
