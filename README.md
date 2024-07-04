@@ -1,4 +1,6 @@
 # Trabajo EAP2
+
+_Rpubs Dashboard: https://rpubs.com/julietponce1/1201854_
 _Diccionario de datos_
 
 **Base de datos: DataFinalTrabajo** 
