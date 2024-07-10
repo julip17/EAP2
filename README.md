@@ -1,6 +1,6 @@
 # Trabajo EAP2
 
-_Rpubs Dashboard: https://rpubs.com/julietponce1/1202897
+_Rpubs Dashboard:_ https://rpubs.com/julietponce1/1203208
 
 _Diccionario de datos_
 
