@@ -1,0 +1,473 @@
+---
+title: "TrabajoFinal"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    navbar:
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+```
+
+Análisis Univariado y Bivariado {data-icon="fa-signal"}
+===================================== 
+
+Column {data-width=400}
+-----------------------------------------------------------------------
+
+### Comentarios
+
+_Univariado_
+
+Histograma: Se puede apreciar desde el valor mínimo al máximo, la media y la desviación típica.
+
+- Min.: 0.82000000
+- Median: 33.43000000
+- Mean: 34.28897959
+- Max.: 69.83000000
+- Sd.: 18.46537175
+
+Boxplot: No existen datos atípicos.
+
+
+_Bivariado:_ 
+
+Después de realizar la correlación Pearson, se conluyó que las variables 
+
+* "porcentaje_mujeres", sí tiene correlación
+
+* "porcentaje_jovenes", no tiene correlación
+
+* "IDH", sí existe correlación.
+
+
+Column {data-width=600} {.tabset}
+-----------------------------------------------------------------------
+
+```{r}
+setwd("C:/Users/soporte/Desktop/EAP2 - Datas")
+library(rio)
+data=import("DataFinalTrabajo.csv")
+```
+
+```{r}
+colnames(data)[colnames(data) == '% Votos'] <- 'Porc_votos'
+colnames(data)[colnames(data) == '% Pobreza Extrema'] <- 'Porc_PE'
+data$PorcentajeV <- data$Porc_votos * 100
+library(DescTools)
+
+allStats=c(summary(data$PorcentajeV),
+  sd=sd(data$PorcentajeV),
+  skew=Skew(data$PorcentajeV),
+  kurt=Kurt(data$PorcentajeV),
+  cv=CoefVar(data$PorcentajeV))
+library(ggrepel)
+```
+
+
+### Histograma
+
+```{r}
+library(ggplot2)
+base=ggplot(data=data,
+            aes(x=PorcentajeV))
+histogram= base + geom_histogram(aes(y = after_stat(density)),
+                 colour = 1, fill = "white",bins=10) +  
+    stat_function(fun = dnorm,
+                  args = list(mean = allStats['Mean'],
+                              sd = allStats['sd']),col='red')
+    
+histogram
+```
+
+### Boxplot
+
+```{r}
+base=ggplot(data=data,
+            aes(y=PorcentajeV))
+boxplot=base + geom_boxplot()
+
+boxplot
+```
+
+### Bivariado 1
+
+```{r}
+f1=formula(~total_electores_mujeres + PorcentajeV)
+pearsonf1=cor.test(f1,data=data)[c('estimate','p.value')]
+pearsonf1
+spearmanf1=cor.test(f1,data=data,method='spearman',exact=F)[c('estimate','p.value')]
+spearmanf1
+```
+
+### Bivariado 2
+
+```{r}
+f2=formula(~porcentaje_jovenes + PorcentajeV)
+```
+
+```{r}
+pearsonf2=cor.test(f2,data=data)[c('estimate','p.value')]
+pearsonf2
+```
+```{r}
+spearmanf2=cor.test(f2,data=data,method='spearman',exact=F)[c('estimate','p.value')]
+spearmanf2
+```
+
+### Bivariado 3
+
+```{r}
+f3=formula(~IDH + PorcentajeV)
+```
+
+```{r}
+pearsonf3=cor.test(f3,data=data)[c('estimate','p.value')]
+pearsonf3
+```
+```{r}
+spearmanf3=cor.test(f3,data=data,method='spearman',exact=F)[c('estimate','p.value')]
+spearmanf3
+```
+
+
+---
+
+Regresión Lineal {data-icon="fa-signal"}
+===================================== 
+
+Column {data-width=400}
+-----------------------------------------------------------------------
+
+### Comentarios
+
+_Interpretación RL1:_
+
+El _porcentaje de mujeres_ votantes SÍ tiene efecto y es significativo, por lo que, tiene una relación directa siendo controlado por el _porcentaje de pobreza extrema_.
+
+
+_Interpretación RL2:_ 
+
+El _porcentaje de jovenes_ no tiene significancia en los votos por Castillo.
+
+
+_Interpretación RL3:_
+
+Añadimos la variable IDH y todas las variables son significativas con el porcentaje de votos por Castillo. Para saber cuál tiene mayor impacto, estandarizamos los coeficientes.
+
+
+_Interpretación Anova:_
+
+El modelo3 es el mejor.
+
+
+_Linealidad:_ Línea roja debe tender a horizontal
+
+
+_Homocedasticidad:_ Línea roja debe tender a horizontal
+
+
+_Normalidad de los residuos:_ ¿Puntos cerca a la diagonal?
+
+
+_No multicolinealidad:_ > 5 es problematico
+
+
+_Valores influyentes:_ Si no aparece ningún número, no afecta
+
+
+```{r}
+library(modelsummary)
+library(dplyr)
+library(kableExtra)
+```
+
+
+
+Column {data-width=600} {.tabset}
+-----------------------------------------------------------------------
+
+
+### Regresión 1
+
+```{r}
+modelo1=formula(Porc_votos~ porcentaje_mujeres + Porc_PE)
+reg1=lm(modelo1,data=data)
+modelo1=list('VotosCastillo (I)'=reg1)
+modelsummary(modelo1, title = "Regresion: modelo 1",
+             stars = TRUE,
+             output = "kableExtra")
+```
+
+
+### Regresión 2
+
+```{r}
+modelo2=formula(Porc_votos~ porcentaje_mujeres + porcentaje_jovenes + Porc_PE)
+reg2=lm(modelo2,data=data)
+modelo2=list('VotosCastillo (II)'=reg2)
+modelsummary(modelo2, title = "Regresion: modelo 2",
+             stars = TRUE,
+             output = "kableExtra")
+```
+
+### Regresión 3
+
+```{r}
+modelo3=formula(Porc_votos~ porcentaje_mujeres+ porcentaje_jovenes+ IDH+ Porc_PE)
+reg3=lm(modelo3,data=data)
+modelo3=list('VotosCastillo (III)'=reg3)
+modelsummary(modelo3, title = "Regresion: modelo 3",
+             stars = TRUE,
+             output = "kableExtra")
+```
+
+
+### Comparando modelos
+
+```{r}
+models=list('Votos_Castillo (I)'=reg1,
+            'Votos_Castillo (II)'=reg2,
+            'Votos_Castillo (III)'=reg3)
+library(magrittr)
+library(knitr)
+tanova=anova(reg1,reg2,reg3)
+
+kable(tanova,
+      caption = "Tabla ANOVA para comparar modelos")%>%kableExtra::kable_styling(full_width = FALSE)
+```
+
+
+### Linealidad
+
+```{r}
+plot(reg3, 1)
+```
+
+#Interpretación: La falta de linearidad provocaría que el modelo no sirva para explicar las mismas variables con datos diferentes en otros estudios.
+
+
+### Homocedasticidad
+```{r}
+plot(reg3, 3)
+```
+
+#Interpretación: Se rechaza que el modelo muestre homocedasticidad.
+
+
+### Normalidad de los residuos
+```{r}
+plot(reg3, 2)
+```
+
+#Interpretación: Se rechaza la normalidad de los residuos. Por lo tanto, porcentaje de votos se distribuye de manera normal y se puede realizar inferencias a partir de lo encontrado como interpretaciones sólidas y confiables en base a resultados.
+
+
+### No multicolinealidad
+```{r}
+library(DescTools)
+library(kableExtra)
+VIF(reg3) %>%kable(col.names = "VIF",caption ="Evaluando Multicolinealidad usando VIF (Variance Inflation Factors)" )%>%kable_styling(full_width = F)
+```
+
+#Interpretación: no existe multiconealidad alta entre los predictores y permite calcular bien el efecto de cada regresor.
+
+### Valores influyentes
+```{r}
+plot(reg3, 5)
+```
+
+### Cuadro V.I
+```{r}
+checkReg3=as.data.frame(influence.measures(reg3)$is.inf)
+checkReg3[checkReg3$cook.d & checkReg3$hat,c('cook.d','hat')]%>%kable(caption = "Valores Influyentes criticos")%>%kable_styling(full_width = F)
+```
+
+#Interpretación: Ningún número afecta el cálculo de la regresión.
+
+
+---
+
+
+Clusterización {data-icon="fa-signal"}
+===================================== 
+
+Column {data-width=400}
+-----------------------------------------------------------------------
+
+### Comentarios
+
+_PAM:_
+
+# Gráfico C: Nos recomienda dos clusters.
+
+# Clusterización: Provincias mal clusterizadas: "BONGARA", "CAJATAMBO", "HUAMANGA", "JAÉN", "LAMPA", "SANDIA", "UTCUBAMBA".
+
+# Gráfico PAM - Dos subconjuntos con provincias mal clusterizadas.
+
+
+_Agnes:_
+
+# Gráfico D: Recomienda un cluster.
+
+# Al momento de usar la función: #fviz_silhouette(res.agnes,print.summary = F). No permite continuar con el análisis porque no permite un operador unitario. Por lo tanto, queda ahí el análisis.
+
+
+_Diana:_
+
+# Gráfico E: Nos recomienda dos clusters.
+
+# Clusterización: Sin provincias mal clusterizadas.
+
+# Gráfico DIANA - Dos subconjuntos sin provincias mal clusterizadas.
+
+
+
+Column {data-width=600} {.tabset}
+-----------------------------------------------------------------------
+
+### Grafico A
+
+```{r}
+data1 <- subset(data, select = c(Provincia, Porc_votos, porcentaje_mujeres, porcentaje_jovenes, IDH, Porc_PE))
+
+boxplot(data1[,c(3:6)],horizontal = F,las=2,cex.axis = 0.5)
+```
+
+#Datos seleccionados
+
+
+### Grafico B
+
+```{r}
+library(BBmisc)
+boxplot(normalize(data1[,c(3:6)],method='standardize'))
+data1[,c(3:6)]=normalize(data1[,c(3:6)],method='standardize')
+dataClus=data1[,c(3:6)]
+row.names(dataClus)=data1$Provincia
+```
+
+#Las variables están estandarizadas y las guardamos
+
+### Grafico C - PAM
+
+```{r}
+library(cluster)
+g.dist = dist(dataClus, method="euclidean")
+
+library(factoextra)
+fviz_nbclust(dataClus, pam,diss=g.dist,method = "gap_stat",k.max = 10,verbose = F)
+```
+
+
+```{r}
+library(kableExtra)
+set.seed(123)
+res.pam=pam(g.dist,2,cluster.only = F)
+
+#nueva columna
+dataClus$pam=res.pam$cluster
+
+```
+
+
+### Verificar la clusterización
+
+```{r}
+fviz_silhouette(res.pam,print.summary = F)
+silPAM=data.frame(res.pam$silinfo$widths)
+silPAM$Provincia=row.names(silPAM)
+poorPAM=silPAM[silPAM$sil_width<0,'Provincia']%>%sort()
+```
+
+---
+
+```{r}
+data1$pampoor=data1$Provincia%in%poorPAM
+data1$pam=as.ordered(dataClus$pam)
+dataClus$pam=NULL
+```
+
+
+### Grafico D - AGNES
+
+```{r}
+fviz_nbclust(dataClus, hcut,diss=g.dist,method = "gap_stat",k.max = 10,verbose = F,hc_func = "agnes")
+set.seed(123)
+library(factoextra)
+res.agnes<- hcut(g.dist, k = 1,hc_func='agnes',hc_method = "ward.D")
+dataClus$agnes=res.agnes$cluster
+```
+
+
+### Grafico E - DIANA
+
+```{r}
+fviz_nbclust(dataClus, hcut,diss=g.dist,method = "gap_stat",k.max = 10,verbose = F,hc_func = "diana")
+```
+```{r}
+set.seed(123)
+res.diana <- hcut(g.dist, k = 2,hc_func='diana')
+dataClus$diana=res.diana$cluster
+```
+ 
+
+### Silhouettes Diana 
+
+```{r}
+fviz_silhouette(res.diana,print.summary = F)
+```
+
+```{r}
+silDIANA=data.frame(res.diana$silinfo$widths)
+silDIANA$Provincia=row.names(silDIANA)
+poorDIANA=silDIANA[silDIANA$sil_width<0,'Provincia']%>%sort()
+
+data1$dianapoor=data1$Provincia%in%poorDIANA
+data1$diana=as.ordered(dataClus$diana)
+dataClus$diana=NULL
+```
+
+
+### Grafico PAM - Mal clusterizados
+
+```{r}
+proyeccion = cmdscale(g.dist, k=2,add = T) 
+data1$dim1 <- proyeccion$points[,1]
+data1$dim2 <- proyeccion$points[,2]
+PAMlabels=ifelse(data1$pampoor,data1$Provincia,'')
+base= ggplot(data1,aes(x=dim1, y=dim2))  +
+    scale_color_brewer(type = 'qual',palette ='Dark2'  ) + labs(subtitle = "Se destacan los países mal clusterizados")
+
+pamPlot=base + geom_point(size=3, 
+                          aes(color=pam))  + 
+        labs(title = "PAM") 
+pamPlot + geom_text_repel(size=4,
+                          aes(label=PAMlabels),
+                          max.overlaps = 50,
+                          min.segment.length = unit(0, 'lines'))
+```
+
+
+### Grafico DIANA - Mal clusterizados
+
+
+```{r}
+library(ggplot2)
+library(BBmisc)
+
+silDIANA=data.frame(res.diana$silinfo$widths)
+silDIANA$Provincia=row.names(silDIANA)
+poorDIANA=silDIANA[silDIANA$sil_width<0,'Provincia']%>%sort()
+DIANAlabels=ifelse(data1$dianapoor,data$Provincia,'')
+
+dianaPlot=base + geom_point(size=3,
+                            aes(color=diana)) + 
+          labs(title = "DIANA")
+dianaPlot + geom_text_repel(size=4,
+                            aes(label=DIANAlabels), 
+                            max.overlaps = 50,
+                            min.segment.length = unit(0, 'lines'))
+```
